@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 import app.models
 from app.database import Base, engine
+from app.routers import product as product_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="eCommerce Products Service API", version="2.0.0", lifespan=lifespan)
+app.include_router(product_router.router)
 
 
 @app.get("/health")

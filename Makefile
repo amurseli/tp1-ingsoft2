@@ -1,4 +1,4 @@
-.PHONY: build up down logs test lint
+.PHONY: build up down restart logs test lint
 
 COMPOSE = docker compose
 APP_SERVICE = app
@@ -14,6 +14,10 @@ up-build: build up
 
 down: 
 	$(COMPOSE) down
+
+restart:
+	$(COMPOSE) down
+	$(COMPOSE) up --build -d
 
 logs:
 	$(COMPOSE) logs -f
