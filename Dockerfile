@@ -16,6 +16,8 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 
 COPY app/ ./app/
+COPY tests/ ./tests/
+COPY pyproject.toml .
 
 USER appuser
 

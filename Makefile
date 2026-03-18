@@ -23,6 +23,7 @@ logs:
 	$(COMPOSE) logs -f
 
 test: 
+	$(COMPOSE) up -d db-test
 	$(COMPOSE) exec $(APP_SERVICE) pytest tests/ -v
 
 lint: 
