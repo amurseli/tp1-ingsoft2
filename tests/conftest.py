@@ -25,6 +25,7 @@ def client():
         )
         conn.autocommit = True
         cur = conn.cursor()
+        cur.execute("DELETE FROM cart_items")
         cur.execute("DELETE FROM products")
         cur.close()
         conn.close()
