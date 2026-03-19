@@ -73,3 +73,24 @@ def test_update_product(client):
     data = response.json()["data"]
     assert data["title"] == "Actualizado"
     assert data["price"] == 25.00
+
+
+def test_delete_product(client):
+    create = client.post("/products", json={
+        "sellerId": 1,
+        "title": "Para borrar",
+        "description": "Desc",
+        "price": 10.00,
+    })
+    product_id = create.json()["data"]["id"]
+
+    response = client.delete(f"/products/{product_id}")
+    assert response.status_code == 204
+
+    response = client.get(f"/products/{product_id}")
+    assert response.status_code == 404
+
+
+def test_delete_product_not_found(client):
+    response = client.delete("/products/999")
+    assert response.status_code == 404
