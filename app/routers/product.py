@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -35,3 +35,11 @@ async def update_product(product_id: int, body: ProductUpdate, db: AsyncSession 
         raise HTTPException(status_code=404, detail="Product not found")
     product = await product_repo.update_product(db, product, body.title, body.description, body.price)
     return {"data": ProductResponse.model_validate(product)}
+
+@router.delete("/{product_id}")
+async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
+    product = await product_repo.get_product(db, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    await product_repo.delete_product(db, product)
+    return Response(status_code=204)

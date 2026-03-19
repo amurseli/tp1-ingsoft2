@@ -29,3 +29,7 @@ async def update_product(db: AsyncSession, product: Product, title: str, descrip
     await db.commit()
     await db.refresh(product)
     return product
+
+async def delete_product(db: AsyncSession, product: Product) -> None:
+    await db.delete(product)
+    await db.commit()
