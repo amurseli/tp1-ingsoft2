@@ -1,3 +1,4 @@
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -5,12 +6,15 @@ from app.database import get_db
 from app.repository import product as product_repo
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
 
+logger = structlog.get_logger()
+
 router = APIRouter(prefix="/products", tags=["products"])
 
 
 @router.post("", status_code=201)
 async def create_product(body: ProductCreate, db: AsyncSession = Depends(get_db)):
     product = await product_repo.create_product(db, body.sellerId, body.title, body.description, body.price)
+    logger.info("product_created", product_id=product.id, seller_id=product.seller_id)
     return {"data": ProductResponse.model_validate(product)}
 
 
@@ -34,6 +38,7 @@ async def update_product(product_id: int, body: ProductUpdate, db: AsyncSession 
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     product = await product_repo.update_product(db, product, body.title, body.description, body.price)
+    logger.info("product_updated", product_id=product.id)
     return {"data": ProductResponse.model_validate(product)}
 
 @router.delete("/{product_id}")
@@ -42,4 +47,5 @@ async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     await product_repo.delete_product(db, product)
+    logger.info("product_deleted", product_id=product_id)
     return Response(status_code=204)

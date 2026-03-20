@@ -1,3 +1,4 @@
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -5,6 +6,8 @@ from app.database import get_db
 from app.repository import cart as cart_repo
 from app.repository import product as product_repo
 from app.schemas.cart import AddCartRequest, CartItemResponse, CartResponse
+
+logger = structlog.get_logger()
 
 router = APIRouter(prefix="/cart", tags=["cart"])
 
@@ -15,6 +18,7 @@ async def add_item(user_id: int, body: AddCartRequest, db: AsyncSession = Depend
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     item = await cart_repo.add_item(db, user_id, product.id, product.title, product.price)
+    logger.info("cart_item_added", user_id=user_id, product_id=product.id)
     return {"data": CartItemResponse.model_validate(item)}
 
 @router.get("/{user_id}")
@@ -30,9 +34,11 @@ async def delete_item(user_id: int, item_id: int, db: AsyncSession = Depends(get
     if not item:
         raise HTTPException(status_code=404, detail="Cart item not found")
     await cart_repo.delete_item(db, item)
+    logger.info("cart_item_deleted", user_id=user_id, item_id=item_id)
     return Response(status_code=204)
 
 @router.delete("/{user_id}")
 async def wipe_cart(user_id: int, db: AsyncSession = Depends(get_db)):
     await cart_repo.delete_all_items(db, user_id)
+    logger.info("cart_wiped", user_id=user_id)
     return Response(status_code=204)

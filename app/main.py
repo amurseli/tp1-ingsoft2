@@ -1,4 +1,4 @@
-import logging
+import structlog
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -11,15 +11,20 @@ from app.database import Base, engine
 from app.routers import product as product_router
 from app.routers import cart as cart_router
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+structlog.configure(
+    processors=[
+        structlog.stdlib.add_log_level,
+        structlog.dev.ConsoleRenderer(),
+    ],
+)
+logger = structlog.get_logger()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database tables ready")
+    logger.info("database_tables_ready")
     yield
     await engine.dispose()
 
