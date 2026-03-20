@@ -19,9 +19,11 @@ AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False, auto
 
 
 class Base(DeclarativeBase):
+    """Base class for all ORM models."""
     pass
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Yield a database session and close it after use."""
     async with AsyncSessionLocal() as session:
         yield session
