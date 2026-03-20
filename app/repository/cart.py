@@ -17,3 +17,13 @@ async def get_items_by_user(db: AsyncSession, user_id: int) -> list[CartItem]:
         .order_by(CartItem.added_at.desc(), CartItem.id.desc())
     )
     return list(result.scalars().all())
+
+async def get_item(db: AsyncSession, user_id: int, item_id: int) -> CartItem | None:
+    result = await db.execute(
+        select(CartItem).where(CartItem.id == item_id, CartItem.user_id == user_id)
+    )
+    return result.scalar_one_or_none()
+
+async def delete_item(db: AsyncSession, item: CartItem) -> None:
+    await db.delete(item)
+    await db.commit()

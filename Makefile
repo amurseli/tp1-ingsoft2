@@ -1,4 +1,4 @@
-.PHONY: build up down restart logs test lint
+.PHONY: build up down restart logs test test-cart test-products lint
 
 COMPOSE = docker compose
 APP_SERVICE = app
@@ -25,6 +25,14 @@ logs:
 test: 
 	$(COMPOSE) up -d db-test
 	$(COMPOSE) exec $(APP_SERVICE) pytest tests/ -v
+
+test-cart:
+	$(COMPOSE) up -d db-test
+	$(COMPOSE) exec $(APP_SERVICE) pytest tests/test_cart.py -v
+
+test-products:
+	$(COMPOSE) up -d db-test
+	$(COMPOSE) exec $(APP_SERVICE) pytest tests/test_products.py -v
 
 lint: 
 	$(COMPOSE) exec $(APP_SERVICE) ruff check app/ tests/

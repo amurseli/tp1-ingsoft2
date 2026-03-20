@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -23,3 +23,11 @@ async def get_cart(user_id: int, db: AsyncSession = Depends(get_db)):
     cart_items = [CartItemResponse.model_validate(item) for item in items]
     total = sum(item.unit_price for item in items)
     return {"data": CartResponse(userId=user_id, items=cart_items, totalPrice=round(total, 2))}
+
+@router.delete("/{user_id}/items/{item_id}")
+async def delete_item(user_id: int, item_id: int, db: AsyncSession = Depends(get_db)):
+    item = await cart_repo.get_item(db, user_id, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Cart item not found")
+    await cart_repo.delete_item(db, item)
+    return Response(status_code=204)
