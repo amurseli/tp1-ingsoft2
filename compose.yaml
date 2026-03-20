@@ -21,6 +21,8 @@ services:
     image: postgres:17-bookworm
     container_name: ecommerce-db-test
     restart: unless-stopped
+    profiles:
+      - test
     environment:
       POSTGRES_DB: ${DATABASE_NAME:-db}
       POSTGRES_USER: ${DATABASE_USER:-admin}

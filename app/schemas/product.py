@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class ProductCreate(BaseModel):

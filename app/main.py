@@ -6,10 +6,13 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+import os
 import app.models
 from app.database import Base, engine
 from app.routers import product as product_router
 from app.routers import cart as cart_router
+
+environment = os.getenv("ENVIRONMENT", "development")
 
 structlog.configure(
     processors=[
@@ -20,11 +23,13 @@ structlog.configure(
 logger = structlog.get_logger()
 
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     logger.info("database_tables_ready")
+    logger.info("app_started", environment=environment)
     yield
     await engine.dispose()
 

@@ -3,9 +3,6 @@ uvicorn[standard]==0.34.0
 
 sqlalchemy==2.0.40
 asyncpg==0.30.0
-alembic==1.15.1
-
-pydantic-settings==2.8.1
 
 structlog==25.1.0
 
