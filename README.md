@@ -5,6 +5,7 @@
 - [Introduccion](#introduccion)
 - [Lo mas desafiante](#lo-mas-desafiante)
 - [Pre-requisitos](#pre-requisitos)
+- [Instalación](#instalacion)
 - [Testing](#testing)
 - [CI/CD](#cicd)
 - [Comandos](#comandos)
@@ -22,6 +23,21 @@ La parte mas desafiante del proyecto fue la configuracion del entorno de testing
 - Docker (>= 20.10) y Docker Compose
 - Python 3.12 (solo si se quiere correr fuera de Docker)
 - Make
+
+## Instalacion
+
+1. Clonar el repositorio
+2. Copiar las variables de entorno:
+```bash
+cp .env.example .env
+```
+3. Construir y levantar los servicios:
+```bash
+make build
+make up
+```
+
+El servicio queda disponible en `http://localhost:8080`.
 
 ## Testing
 
