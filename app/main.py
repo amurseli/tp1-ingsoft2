@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI(title="eCommerce Products Service API", version="2.0.0", lifespan=lifespan)
+app = FastAPI(title="Vivi | eCommerce Products Service API", version="2.0.0", lifespan=lifespan)
 app.include_router(product_router.router)
 app.include_router(cart_router.router)
 
