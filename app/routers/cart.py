@@ -31,3 +31,8 @@ async def delete_item(user_id: int, item_id: int, db: AsyncSession = Depends(get
         raise HTTPException(status_code=404, detail="Cart item not found")
     await cart_repo.delete_item(db, item)
     return Response(status_code=204)
+
+@router.delete("/{user_id}")
+async def wipe_cart(user_id: int, db: AsyncSession = Depends(get_db)):
+    await cart_repo.delete_all_items(db, user_id)
+    return Response(status_code=204)

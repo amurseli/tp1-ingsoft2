@@ -1,6 +1,7 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.cart_item import CartItem
+
 
 
 async def add_item(db: AsyncSession, user_id: int, product_id: int, title: str, unit_price: float) -> CartItem:
@@ -26,4 +27,8 @@ async def get_item(db: AsyncSession, user_id: int, item_id: int) -> CartItem | N
 
 async def delete_item(db: AsyncSession, item: CartItem) -> None:
     await db.delete(item)
+    await db.commit()
+
+async def delete_all_items(db: AsyncSession, user_id: int) -> None:
+    await db.execute(delete(CartItem).where(CartItem.user_id == user_id))
     await db.commit()
