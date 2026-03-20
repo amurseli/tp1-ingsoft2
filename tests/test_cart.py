@@ -130,3 +130,16 @@ def test_wipe_cart(client):
 def test_wipe_cart_empty(client):
     response = client.delete("/cart/999")
     assert response.status_code == 204
+
+def test_add_item_product_not_found_rfc7807(client):
+    response = client.post("/cart/1/items", json={"productId": 999})
+    assert response.status_code == 404
+    assert response.headers["content-type"] == "application/problem+json"
+    data = response.json()
+    assert data["type"] == "about:blank"
+
+
+def test_add_item_missing_fields(client):
+    response = client.post("/cart/1/items", json={})
+    assert response.status_code == 400
+    assert response.headers["content-type"] == "application/problem+json"

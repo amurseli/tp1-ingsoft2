@@ -94,3 +94,33 @@ def test_delete_product(client):
 def test_delete_product_not_found(client):
     response = client.delete("/products/999")
     assert response.status_code == 404
+
+def test_create_product_missing_fields(client):
+    response = client.post("/products", json={"title": "Remera"})
+    assert response.status_code == 400
+    assert response.headers["content-type"] == "application/problem+json"
+    data = response.json()
+    assert data["type"] == "about:blank"
+    assert data["status"] == 400
+    assert "instance" in data
+
+
+def test_create_product_invalid_price(client):
+    response = client.post("/products", json={
+        "sellerId": 1,
+        "title": "Remera",
+        "description": "Desc",
+        "price": -5,
+    })
+    assert response.status_code == 400
+    assert response.headers["content-type"] == "application/problem+json"
+
+
+def test_get_product_not_found_rfc7807(client):
+    response = client.get("/products/999")
+    assert response.status_code == 404
+    assert response.headers["content-type"] == "application/problem+json"
+    data = response.json()
+    assert data["type"] == "about:blank"
+    assert data["status"] == 404
+    assert data["instance"] == "/products/999"
