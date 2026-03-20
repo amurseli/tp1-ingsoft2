@@ -1,18 +1,18 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ProductCreate(BaseModel):
     sellerId: int
     title: str
     description: str
-    price: float = Field(gt=0)
+    price: float = Field(ge=0.01)
 
 
 class ProductUpdate(BaseModel):
     title: str
     description: str
-    price: float = Field(gt=0)
+    price: float = Field(ge=0.01)
 
 
 class ProductResponse(BaseModel):
