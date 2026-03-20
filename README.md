@@ -6,6 +6,7 @@
 - [Lo mas desafiante](#lo-mas-desafiante)
 - [Pre-requisitos](#pre-requisitos)
 - [Testing](#testing)
+- [CI/CD](#cicd)
 - [Comandos](#comandos)
 
 ## Introduccion
@@ -27,6 +28,29 @@ La parte mas desafiante del proyecto fue la configuracion del entorno de testing
 Los tests E2E se ejecutan contra una instancia separada de PostgreSQL definida en el compose. Se utiliza pytest como framework de testing.
 
 - [pytest - documentacion oficial](https://docs.pytest.org/)
+
+## CI/CD
+
+El proyecto usa GitHub Actions para ejecutar los tests automaticamente en cada push o pull request a la rama `main`. El workflow se encuentra en `.github/workflows/test.yml`.
+
+### Como funciona
+
+1. Clona el repositorio
+2. Copia `.env.example` a `.env` para configurar las variables de entorno
+3. Construye las imagenes de Docker con `make build`
+4. Levanta los servicios (app, base de datos y base de datos de test) con `make up`
+5. Espera a que los servicios esten listos
+6. Ejecuta los tests con `make test`
+7. Baja los servicios con `make down`
+
+### Adaptacion a produccion
+
+Para usar este workflow en prod se podrian hacer los siguientes cambios:
+
+- Usar secrets de GitHub para las credenciales de la base de datos en vez del `.env.example` con valores por defecto.
+- Agregar un step de linting con `make lint` antes de correr los tests.
+- Agregar un step de build y push de la imagen Docker a un registry (como Docker Hub o GitHub Container Registry) si los tests pasan.
+- Configurar deploy automatico a un servicio de hosting despues del push al registry.
 
 ## Comandos
 
